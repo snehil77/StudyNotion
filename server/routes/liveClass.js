@@ -6,7 +6,7 @@ const {
   endRoom,
   getZegoToken,
   getActiveRooms,
-} = require("../controllers/liveClass")
+} = require("../controllers/LiveClass")
 
 router.post("/create", auth, isInstructor, createRoom)
 router.post("/end", auth, isInstructor, endRoom)
