@@ -1,8 +1,6 @@
-// src/pages/SearchPage.jsx
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { apiConnector } from "../services/apiConnector"
-import { courses } from "../services/apis"
 import CourseCard from "../components/core/Catalog/Course_Card"
 import { AiOutlineSearch } from "react-icons/ai"
 
@@ -24,7 +22,8 @@ export default function SearchPage() {
   const fetchResults = async (q) => {
     setLoading(true)
     try {
-      const res = await apiConnector("GET", `http://localhost:4000/api/v1/course/search?q=${encodeURIComponent(q)}`)
+      const BASE = process.env.REACT_APP_BASE_URL || "http://localhost:4000/api/v1"
+      const res = await apiConnector("GET", `${BASE}/course/search?q=${encodeURIComponent(q)}`)
       setResults(res.data.data || [])
     } catch (err) {
       console.error("Search error:", err)
@@ -43,7 +42,6 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen bg-richblack-900 text-richblack-5 px-4 py-10">
       <div className="mx-auto max-w-5xl">
-        {/* Search Bar */}
         <form onSubmit={handleSearch} className="mb-8 flex items-center gap-3">
           <div className="flex flex-1 items-center gap-2 rounded-xl border border-richblack-600 bg-richblack-800 px-4 py-3">
             <AiOutlineSearch className="text-richblack-400" fontSize={22} />
@@ -63,7 +61,6 @@ export default function SearchPage() {
           </button>
         </form>
 
-        {/* Results */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-richblack-600 border-t-yellow-50" />
