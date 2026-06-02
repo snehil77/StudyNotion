@@ -1,8 +1,8 @@
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
 
 const mailSender = async (email, title, body) => {
   try {
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: 587,
       secure: false,
@@ -10,20 +10,36 @@ const mailSender = async (email, title, body) => {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
-    })
+      connectionTimeout: 30000,
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
+    });
 
-    let info = await transporter.sendMail({
-      from: `"Studynotion | CodeHelp" <${process.env.MAIL_USER}>`,
-      to: `${email}`,
-      subject: `${title}`,
-      html: `${body}`,
-    })
-    console.log(info.response)
-    return info
+    console.log("Verifying SMTP connection...");
+
+    await transporter.verify();
+
+    console.log("✅ SMTP Connected Successfully");
+
+    const info = await transporter.sendMail({
+      from: `"StudyNotion | CodeHelp" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: title,
+      html: body,
+    });
+
+    console.log("✅ Email sent successfully");
+    console.log("Message ID:", info.messageId);
+    console.log("Response:", info.response);
+
+    return info;
   } catch (error) {
-    console.log(error.message)
-    return error.message
-  }
-}
+    console.error("❌ MAIL ERROR START ❌");
+    console.error(error);
+    console.error("❌ MAIL ERROR END ❌");
 
-module.exports = mailSender
+    throw error;
+  }
+};
+
+module.exports = mailSender;
